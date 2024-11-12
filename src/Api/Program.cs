@@ -1,7 +1,8 @@
 using Api;
 using Application;
-using Application.UseCases.HelloWorld.Queries;
+using Application.UseCases.Greeting.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -12,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
-    app.MapGet("/", async (ISender sender) => await sender.Send(new HelloWorldQuery()));
+    app.MapGet("/greeting", async ([FromQuery] string name, ISender sender) => await sender.Send(new GreetingQuery(name)));
 
     app.Run();
 }
