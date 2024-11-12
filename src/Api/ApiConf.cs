@@ -1,3 +1,4 @@
+using System.Threading.RateLimiting;
 using Api.Endpoints;
 using Application.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
@@ -8,6 +9,10 @@ namespace Api;
 
 public static class ApiConf
 {
+    public const string CORS_POLICY = "CorsPolicy";
+    public const string OUTPUT_CACHE_POLICY = "OutputCachePolicy";
+    public const string RATE_LIMITER_KEY = "GlobalLimiter";
+
     public static IServiceCollection ConfigureApi(this WebApplicationBuilder builder)
     {
         ConfigureLoggin(builder);
@@ -47,6 +52,50 @@ public static class ApiConf
                 }
             });
         });
+    }
+
+    public static IServiceCollection ConfigureRateLimiting(this IServiceCollection services)
+    {
+        services.AddRateLimiter(cfg =>
+        {
+            cfg.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(_ =>
+                RateLimitPartition.GetFixedWindowLimiter(RATE_LIMITER_KEY, _ =>
+                    new FixedWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = 100,
+                        QueueLimit = 2,
+                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                        Window = TimeSpan.FromMinutes(1)
+                    }));
+        });
+        return services;
+    }
+
+    public static IServiceCollection ConfigureCors(this IServiceCollection services)
+    {
+        services.AddCors(opt =>
+        {
+            opt.AddPolicy(CORS_POLICY, cfg =>
+            {
+                cfg.AllowAnyOrigin();
+                cfg.AllowAnyHeader();
+                cfg.AllowAnyMethod();
+            });
+        });
+        return services;
+    }
+
+    public static IServiceCollection ConfigureOutputCache(this IServiceCollection services)
+    {
+        services.AddOutputCache(cfg =>
+        {
+            cfg.AddPolicy(OUTPUT_CACHE_POLICY, builder =>
+            {
+                builder.Expire(TimeSpan.FromSeconds(5));
+            });
+        });
+        return services;
     }
 
     public static void MapEndpoints(this WebApplication app)

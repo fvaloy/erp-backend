@@ -1,9 +1,5 @@
 using Api;
 using Application;
-using Application.UseCases.Greeting.Queries;
-using Francisvac.Result.AspNetCore;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 {
