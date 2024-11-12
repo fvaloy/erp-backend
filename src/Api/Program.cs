@@ -1,6 +1,7 @@
 using Api;
 using Application;
 using Application.UseCases.Greeting.Queries;
+using Francisvac.Result.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,8 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 {
     app.ConfigureMiddlewareException();
-    
-    app.MapGet("/greeting", async ([FromQuery] string name, ISender sender) => await sender.Send(new GreetingQuery(name)));
+
+    app.MapGet("/greeting", async ([FromQuery] string name, ISender sender) => (await sender.Send(new GreetingQuery(name))).ToMinimalApiResult());
 
     app.Run();
 }

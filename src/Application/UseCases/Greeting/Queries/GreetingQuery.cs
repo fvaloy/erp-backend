@@ -1,15 +1,21 @@
 using FluentValidation;
+using Francisvac.Result;
 using MediatR;
 
 namespace Application.UseCases.Greeting.Queries;
 
-public record GreetingQuery(string Name) : IRequest<string>;
+public record GreetingQuery(string Name) : IRequest<Result<string>>;
 
-public class GreetingQueryHandler : IRequestHandler<GreetingQuery, string>
+public class GreetingQueryHandler : IRequestHandler<GreetingQuery, Result<string>>
 {
-    public Task<string> Handle(GreetingQuery request, CancellationToken cancellationToken)
+    public Task<Result<string>> Handle(GreetingQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult($"Hello {request.Name}!");
+        if (request.Name == "eloyka")
+        {
+            return Task.FromResult(Result<string>.Error("hell no >:("));
+        }
+
+        return Task.FromResult(Result<string>.Success($"Hello {request.Name}!"));
     }
 }
 
