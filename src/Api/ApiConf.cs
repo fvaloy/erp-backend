@@ -1,3 +1,4 @@
+using Api.Endpoints;
 using Application.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -46,5 +47,10 @@ public static class ApiConf
                 }
             });
         });
+    }
+
+    public static void MapEndpoints(this WebApplication app)
+    {
+        app.MapGreetingEndpoints();
     }
 }

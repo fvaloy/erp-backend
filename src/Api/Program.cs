@@ -16,7 +16,7 @@ var app = builder.Build();
 {
     app.ConfigureMiddlewareException();
 
-    app.MapGet("/greeting", async ([FromQuery] string name, ISender sender) => (await sender.Send(new GreetingQuery(name))).ToMinimalApiResult());
+    app.MapEndpoints();
 
     app.Run();
 }
