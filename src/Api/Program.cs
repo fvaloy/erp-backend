@@ -13,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
+    app.ConfigureMiddlewareException();
+    
     app.MapGet("/greeting", async ([FromQuery] string name, ISender sender) => await sender.Send(new GreetingQuery(name)));
 
     app.Run();

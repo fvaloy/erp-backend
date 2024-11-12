@@ -1,3 +1,6 @@
+using Application.Exceptions;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
 namespace Api;
@@ -19,5 +22,29 @@ public static class ApiConf
         
         builder.Logging.ClearProviders();
         builder.Logging.AddSerilog();
+    }
+
+    public static void ConfigureMiddlewareException(this WebApplication app)
+    {
+        app.UseExceptionHandler(cfg =>
+        {
+            cfg.Run(async ctx =>
+            {
+                var ctxFeature = ctx.Features.Get<IExceptionHandlerFeature>();
+                if (ctxFeature is not null)
+                {
+                    switch (ctxFeature.Error)
+                    {
+                        case ValidationException:
+                            var exception = (ValidationException)ctxFeature.Error;
+                            await Results.UnprocessableEntity(new ValidationProblemDetails(exception.Errors)).ExecuteAsync(ctx);
+                            break;
+                        default:
+                            await Results.Problem(detail: ctxFeature.Error.Message).ExecuteAsync(ctx);
+                            break;
+                    }
+                }
+            });
+        });
     }
 }
