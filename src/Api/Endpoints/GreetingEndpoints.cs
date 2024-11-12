@@ -11,6 +11,7 @@ public static class GreetingEndpoints
     {
         var greetingGroup = routeBuilder
             .MapGroup("greeting")
+            .WithOpenApi()
             .RequireCors(ApiConf.CORS_POLICY)
             .CacheOutput(ApiConf.OUTPUT_CACHE_POLICY)
             .RequireRateLimiting(ApiConf.RATE_LIMITER_KEY);

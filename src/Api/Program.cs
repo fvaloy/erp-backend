@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 {
     app.ConfigureMiddlewareException();
+    app.UseCors(ApiConf.CORS_POLICY);
 
     app.MapEndpoints();
 

@@ -3,6 +3,7 @@ using Api.Endpoints;
 using Application.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Scalar.AspNetCore;
 using Serilog;
 
 namespace Api;
@@ -16,7 +17,12 @@ public static class ApiConf
     public static IServiceCollection ConfigureApi(this WebApplicationBuilder builder)
     {
         ConfigureLoggin(builder);
-        return builder.Services;
+        return builder.Services
+            .AddEndpointsApiExplorer()
+            .AddSwaggerGen()
+            .ConfigureRateLimiting()
+            .ConfigureCors()
+            .ConfigureOutputCache();
     }
 
     public static void ConfigureLoggin(WebApplicationBuilder builder)
@@ -28,6 +34,16 @@ public static class ApiConf
         
         builder.Logging.ClearProviders();
         builder.Logging.AddSerilog();
+    }
+
+    public static void ConfigureOpenApi(this WebApplication app)
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(cfg =>
+        {
+            cfg.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+            cfg.RoutePrefix = "swagger";
+        });
     }
 
     public static void ConfigureMiddlewareException(this WebApplication app)
@@ -101,5 +117,9 @@ public static class ApiConf
     public static void MapEndpoints(this WebApplication app)
     {
         app.MapGreetingEndpoints();
+        app.MapSwagger();
+        app.MapScalarApiReference(opt => {
+            opt.WithOpenApiRoutePattern("/swagger/v1/swagger.json");
+        });
     }
 }
