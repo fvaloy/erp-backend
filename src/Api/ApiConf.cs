@@ -1,7 +1,9 @@
 using System.Threading.RateLimiting;
 using Api.Endpoints;
+using Application.Auth.Exceptions;
 using Application.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
 using Serilog;
@@ -14,9 +16,10 @@ public static class ApiConf
     public const string OUTPUT_CACHE_POLICY = "OutputCachePolicy";
     public const string RATE_LIMITER_KEY = "GlobalLimiter";
 
-    public static IServiceCollection ConfigureApi(this WebApplicationBuilder builder)
+    public static IServiceCollection AddApi(this WebApplicationBuilder builder)
     {
         ConfigureLoggin(builder);
+        builder.Services.AddHttpContextAccessor();
         return builder.Services
             .AddEndpointsApiExplorer()
             .AddSwaggerGen()
@@ -60,6 +63,9 @@ public static class ApiConf
                         case ValidationException:
                             var exception = (ValidationException)ctxFeature.Error;
                             await Results.UnprocessableEntity(new ValidationProblemDetails(exception.Errors)).ExecuteAsync(ctx);
+                            break;
+                        case ForbiddenAccessException:
+                            await Results.Forbid().ExecuteAsync(ctx);
                             break;
                         default:
                             await Results.Problem(detail: ctxFeature.Error.Message).ExecuteAsync(ctx);
@@ -117,6 +123,7 @@ public static class ApiConf
     public static void MapEndpoints(this WebApplication app)
     {
         app.MapGreetingEndpoints();
+        app.MapAuthEndpoints();
         app.MapSwagger();
         app.MapScalarApiReference(opt => {
             opt.WithOpenApiRoutePattern("/swagger/v1/swagger.json");

@@ -1,9 +1,11 @@
+using Application.Auth;
 using FluentValidation;
 using Francisvac.Result;
 using MediatR;
 
 namespace Application.UseCases.Greeting.Queries;
 
+[Authorize(Roles = "other-role")]
 public record GreetingQuery(string Name) : IRequest<Result<string>>;
 
 public class GreetingQueryHandler : IRequestHandler<GreetingQuery, Result<string>>

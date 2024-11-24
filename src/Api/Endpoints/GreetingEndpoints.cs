@@ -1,3 +1,4 @@
+using Application.Auth;
 using Application.UseCases.Greeting.Queries;
 using Francisvac.Result.AspNetCore;
 using MediatR;
@@ -14,7 +15,8 @@ public static class GreetingEndpoints
             .WithOpenApi()
             .RequireCors(ApiConf.CORS_POLICY)
             .CacheOutput(ApiConf.OUTPUT_CACHE_POLICY)
-            .RequireRateLimiting(ApiConf.RATE_LIMITER_KEY);
+            .RequireRateLimiting(ApiConf.RATE_LIMITER_KEY)
+            .RequireAuthorization();
             
         greetingGroup.MapGet("/", async ([FromQuery] string name, ISender sender) 
             => (await sender.Send(new GreetingQuery(name))).ToMinimalApiResult());
