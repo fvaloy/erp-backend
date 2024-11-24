@@ -1,5 +1,3 @@
-using Application.Auth;
-using Application.UseCases.Greeting.Queries;
 using Application.UseCases.Persons.Commands;
 using Application.UseCases.Persons.Queries;
 using Francisvac.Result.AspNetCore;
@@ -22,6 +20,8 @@ public static class PersonEndpoints
             
         personGroup.MapGet("/", async ([FromQuery] int pageNumber, [FromQuery] int pageSize, [FromQuery] string? search, ISender sender) 
             => await sender.Send(new GetPaginatedPersonsQuery(pageNumber, pageSize, search ?? string.Empty)));
+        personGroup.MapGet("/base-list", async (ISender sender) 
+            => await sender.Send(new GetBaseListOfPersonQuery()));
         personGroup.MapGet("/{id}", async ([FromRoute] string id, ISender sender)
             => (await sender.Send(new GetPersonByIdQuery(id))).ToMinimalApiResult());
         personGroup.MapDelete("/{id}", async ([FromRoute] string id, ISender sender)
