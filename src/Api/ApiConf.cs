@@ -122,9 +122,9 @@ public static class ApiConf
 
     public static void MapEndpoints(this WebApplication app)
     {
-        app.MapGreetingEndpoints();
         app.MapAuthEndpoints();
         app.MapPersonEndpoints();
+        app.MapPositionBlueprintEndpoints();
         app.MapSwagger();
         app.MapScalarApiReference(opt => {
             opt.WithOpenApiRoutePattern("/swagger/v1/swagger.json");
