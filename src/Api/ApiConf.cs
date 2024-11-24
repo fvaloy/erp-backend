@@ -124,6 +124,7 @@ public static class ApiConf
     {
         app.MapGreetingEndpoints();
         app.MapAuthEndpoints();
+        app.MapPersonEndpoints();
         app.MapSwagger();
         app.MapScalarApiReference(opt => {
             opt.WithOpenApiRoutePattern("/swagger/v1/swagger.json");
