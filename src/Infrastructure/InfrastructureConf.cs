@@ -1,10 +1,14 @@
 using System.Text;
 using Application.Auth;
 using Application.Auth.Jwt;
+using Application.Persistence;
 using Infrastructure.Auth;
+using Infrastructure.Persistence;
+using Infrastructure.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -17,19 +21,21 @@ public static class InfrastructureConf
     {
         AddAuth(services);
         services.AddScoped<IUser, CurrentUser>();
+        services.AddScoped<ISaveChangesInterceptor, AuditableInterceptor>();
+        services.AddScoped<ISaveChangesInterceptor, IdInterceptor>();
+        services.AddDbContext<AppDbContext>((sp, options) => options.UseSqlite("Data Source=app.db").AddInterceptors(sp.GetServices<ISaveChangesInterceptor>()));
+        services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
         return services;
     }
 
     public static void AddAuth(IServiceCollection services)
     {
-        services.AddDbContext<AuthDbContext>(
-            options => options.UseSqlite("Data Source=app.db"));
         services.AddAuthorization();
         services.AddIdentity<ApplicationUser, IdentityRole>(opt => {
             opt.Password.RequiredLength = 5;
             opt.User.RequireUniqueEmail = true;
             opt.SignIn.RequireConfirmedEmail = false;
-        }).AddEntityFrameworkStores<AuthDbContext>().AddDefaultTokenProviders();
+        }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
         services.AddAuthentication(opt => {
             opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
