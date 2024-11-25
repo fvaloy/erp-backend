@@ -4,5 +4,5 @@ public sealed class JobPosition : AuditableEntity
 {
     public string PositionBlueprintId { get; set; } = string.Empty;
     public PositionBlueprint PositionBlueprint { get; set; } = null!;
-    public bool IsVancant { get; set; }
+    public bool IsVancant { get; set; } = true;
 }

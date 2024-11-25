@@ -18,7 +18,7 @@ public sealed class GetPositionBluentprintByIdQueryHandler(IAppDbContext context
 
     public async Task<Result<PositionBlueprintDto>> Handle(GetPositionBluentprintByIdQuery request, CancellationToken cancellationToken)
     {
-        var pb = await _context.PositionBlueprints.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var pb = await _context.PositionBlueprints.AsNoTracking().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (pb is null) return Result.NotFound($"the {nameof(PositionBlueprint)}  was not found");
         return PositionBlueprintDto.FromPositionBlueprint(pb);
     }

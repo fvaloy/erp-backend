@@ -31,6 +31,7 @@ public sealed class GetPaginatedPositionBlueprintsQueryHandler(IAppDbContext con
             .Skip((request.PageNumber - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(p => PositionBlueprintDto.FromPositionBlueprint(p))
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
         
         return new PaginatedList<PositionBlueprintDto>(persons, count, request.PageNumber, request.PageSize);

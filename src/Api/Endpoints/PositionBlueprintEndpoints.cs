@@ -11,7 +11,7 @@ public static class PositionBlueprintEndpoints
     public static void MapPositionBlueprintEndpoints(this IEndpointRouteBuilder routeBuilder)
     {
         var positionBlueprintGroup = routeBuilder
-            .MapGroup("position-blueprint")
+            .MapGroup("position-blueprints")
             .WithOpenApi()
             .RequireCors(ApiConf.CORS_POLICY)
             .CacheOutput(ApiConf.OUTPUT_CACHE_POLICY)

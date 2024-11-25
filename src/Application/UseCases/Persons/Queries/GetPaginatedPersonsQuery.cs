@@ -31,6 +31,7 @@ public sealed class GetPaginatedPersonsQueryHandler(IAppDbContext context) : IRe
             .Skip((request.PageNumber - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(p => PersonDto.FromPerson(p))
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
         
         return new PaginatedList<PersonDto>(persons, count, request.PageNumber, request.PageSize);

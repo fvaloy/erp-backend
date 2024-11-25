@@ -2,6 +2,10 @@ namespace Domain.Entities;
 
 public class AuditableEntity : IEntity, IDeletable
 {
+    public AuditableEntity()
+    {
+        Id = Guid.NewGuid().ToString();
+    }
     public string Id { get; set; } = string.Empty;
     public string CreatedBy { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }

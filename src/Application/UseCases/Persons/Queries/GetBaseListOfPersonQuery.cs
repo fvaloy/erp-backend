@@ -24,6 +24,7 @@ public sealed class GetBaseListOfPersonQueryHandler(IAppDbContext context) : IRe
         var persons = await _context.Persons
             .Where(p => p.IsDeleted == false)
             .Select(p => BasePersonDto.FromPerson(p))
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
         
         return persons;
