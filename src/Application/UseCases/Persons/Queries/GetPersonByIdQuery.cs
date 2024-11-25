@@ -17,7 +17,7 @@ public sealed class GetPersonByIdQueryHandler(IAppDbContext context) : IRequestH
 
     public async Task<Result<PersonDto>> Handle(GetPersonByIdQuery request, CancellationToken cancellationToken)
     {
-        var person = await _context.Persons.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var person = await _context.Persons.AsNoTracking().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (person is null) return Result.NotFound("the person was not found");
         return PersonDto.FromPerson(person);
     }

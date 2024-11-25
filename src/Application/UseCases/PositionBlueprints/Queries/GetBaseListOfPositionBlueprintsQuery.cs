@@ -24,6 +24,7 @@ public sealed class GetBaseListOfPositionBlueprintQueryHandler(IAppDbContext con
         var pb = await _context.PositionBlueprints
             .Where(p => p.IsDeleted == false)
             .Select(p => BasePositionBlueprintDto.FromPositionBlueprint(p))
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
         
         return pb;
