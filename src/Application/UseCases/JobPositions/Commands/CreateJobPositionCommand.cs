@@ -26,7 +26,7 @@ public sealed class CreateJobPositionCommandHandler(IAppDbContext context) : IRe
     private readonly IAppDbContext _context = context;
     public async Task<Result<List<JobPositionDto>>> Handle(CreateJobPositionCommand request, CancellationToken cancellationToken)
     {
-        var positionBlueprint = await _context.PositionBlueprints.AsNoTracking().FirstOrDefaultAsync(pb => pb.Id == request.PositionBlueprintId, cancellationToken);
+        var positionBlueprint = await _context.PositionBlueprints.FirstOrDefaultAsync(pb => pb.Id == request.PositionBlueprintId, cancellationToken);
         if (positionBlueprint is null) return Result.NotFound($"{nameof(PositionBlueprint)} was not found");
         
         List<JobPosition> jobPositions = [];

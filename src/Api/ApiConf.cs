@@ -126,6 +126,7 @@ public static class ApiConf
         app.MapPersonEndpoints();
         app.MapPositionBlueprintEndpoints();
         app.MapJobPositionEndpoints();
+        app.MapEmployeeEndpoints();
         app.MapSwagger();
         app.MapScalarApiReference(opt => {
             opt.WithOpenApiRoutePattern("/swagger/v1/swagger.json");
